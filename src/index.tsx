@@ -68,6 +68,8 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   draggingStartedAt: number = 0
   resizeTimeout: any = null
   afterSlideTimer: any = null
+  hasTempLeft: boolean = false
+  hasTempRight: boolean = false
 
   constructor(props: CarouselProps) {
     super(props)
@@ -117,14 +119,20 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   })
 
   handleDragging = (nextPosition: number) => {
-    const { sliderWidth, isDragging } = this.state
+    const { sliderWidth, isDragging, slideIndex, items } = this.state
     const diff = this.draggingStartedAt - nextPosition
     if (isDragging) {
+      if (diff < 0 && slideIndex === 0) {
+        this.handleTempLeft()
+      }
+      if (diff > 0 && slideIndex === items.length - 1) {
+        this.handleTempRight()
+      }
       if (Math.abs(diff) > sliderWidth / 3) {
         if (diff > 0) {
-          this.slideNext()
+          this.handleSlideNext()
         } else {
-          this.slidePrev()
+          this.handleSlidePrev()
         }
       } else {
         this.setState({ left: diff })
@@ -132,30 +140,99 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     }
   }
 
+  handleTempLeft = () => {
+    if (!this.hasTempLeft) {
+      this.hasTempLeft = true
+      const { items, slideIndex } = this.state
+      const item = items[items.length - 1]
+      const clone = React.cloneElement(item as any, {})
+      this.setState({
+        items: [clone, ...items],
+        slideIndex: slideIndex + 1,
+        isResizing: true
+      })
+    }
+  }
+
+  handleTempRight = () => {
+    if (!this.hasTempRight) {
+      this.hasTempRight = true
+      const { items, slideIndex } = this.state
+      const [item, ...rest] = items
+      const clone = React.cloneElement(item as any, {})
+      this.setState({
+        items: [...rest, clone],
+        slideIndex: slideIndex - 1,
+        isResizing: true
+      })
+    }
+  }
+
   slideNext = () => {
+    const { slideIndex, items } = this.state
+    if (slideIndex === items.length - 1) {
+      this.handleTempRight()
+      const timer = setTimeout(() => {
+        clearTimeout(timer)
+        this.handleSlideNext()
+      }, 60)
+    } else {
+      this.handleSlideNext()
+    }
+  }
+
+  handleSlideNext = () => {
     const { items, slideIndex: slideIndexPrev } = this.state
     this.setState(
       state => ({
         slideIndex: Math.min(state.slideIndex + 1, items.length - 1),
-        left: 0
+        left: 0,
+        isResizing: false
       }),
       () => {
         this.handleAfterSlide(slideIndexPrev)
         this.setDragging(false, 0)
+        if (this.hasTempRight) {
+          this.hasTempRight = false
+        }
       }
     )
   }
 
   slidePrev = () => {
-    const { slideIndex: slideIndexPrev } = this.state
+    const { slideIndex } = this.state
+    if (slideIndex === 0) {
+      this.handleTempLeft()
+      const timer = setTimeout(() => {
+        clearTimeout(timer)
+        this.handleSlidePrev()
+      }, 60)
+    } else {
+      this.handleSlidePrev()
+    }
+  }
+
+  handleSlidePrev = () => {
+    const { slideIndex: slideIndexPrev, items } = this.state
     this.setState(
       state => ({
         slideIndex: Math.max(state.slideIndex - 1, 0),
-        left: 0
+        left: 0,
+        isResizing: false
       }),
       () => {
         this.handleAfterSlide(slideIndexPrev)
         this.setDragging(false, 0)
+        if (this.hasTempLeft) {
+          this.setState(
+            {
+              items: [...items.filter((_, index) => index !== items.length - 1)]
+            },
+            () => {
+              this.hasTempLeft = false
+            }
+          )
+        }
       }
     )
   }
@@ -238,7 +315,7 @@ export class Slider extends React.Component {
         {...touchEvents}
         {...mouseEvents}
         ref={frameRef}
-        style={{ overflow: 'hidden' }}
+        style={{ overflow: 'hidden', position: 'relative' }}
       >
         <div
           style={{
