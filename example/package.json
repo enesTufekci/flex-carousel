@@ -1,0 +1,19 @@
+{
+  "name": "flex-carousel-example",
+  "homepage": "https://enestufekci.github.io/flex-carousel",
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "flex-carousel": "link:..",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-scripts": "^1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
