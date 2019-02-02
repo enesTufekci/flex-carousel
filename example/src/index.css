@@ -6,6 +6,7 @@ body {
 
 #root {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -19,4 +20,25 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.slider-item > * {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.slider-item-part {
+  width: 50%;
+}
+
+.slider-item-part img {
+  width: 100%;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
