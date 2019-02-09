@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { Carousel, Controls, Slider } from 'flex-carousel'
 
-const colors = ['red', 'green', 'blue', 'orange', 'teal']
+const colors = ['red', 'green', 'blue', 'orange', 'teal', 'aquamarine']
 
 // const images = [
 //   'https://product-images.cdn.moebel.de/0669b4dc-f2b8-43ab-880f-18f569a12537/31ecc190b80c919bba088a21db2264a3-18441cd-366x275.jpg?quality=85',
@@ -18,33 +18,37 @@ export default class App extends Component {
   }
   render() {
     return (
-      <Carousel
-        itemsToShow={1}
-        afterSlide={this.handleAfterSlide}
-        showOverflow={true}
-        items={colors.map((color, index) => (
-          <div className="slider-item" style={{ backgroundColor: color }}>
-            Slide {index}
+      <div style={{ border: '3px dotted black' }}>
+        <Carousel
+          itemsToShow={2}
+          slideIndex={3}
+          afterSlide={this.handleAfterSlide}
+          // showOverflow={true}
+          wrapAround={true}
+          items={colors.map((color, index) => (
+            <div className="slider-item" style={{ backgroundColor: color }}>
+              Slide {index}
+            </div>
+          ))}
+        >
+          <div id="slider">
+            <Slider />
           </div>
-        ))}
-      >
-        <div id="slider">
-          <Slider />
-        </div>
-        <div id="slide-controls">
-          <Controls>
-            {({ slideNext, slidePrev, slideCount, slideIndex }) => (
-              <div>
-                <button onClick={slidePrev}>Prev</button>
-                <span>
-                  {slideIndex} / {slideCount}
-                </span>
-                <button onClick={slideNext}>Next</button>
-              </div>
-            )}
-          </Controls>
-        </div>
-      </Carousel>
+          <div id="slide-controls">
+            <Controls>
+              {({ slideNext, slidePrev, slideCount, slideIndex, step }) => (
+                <div>
+                  <button onClick={slidePrev}>Prev</button>
+                  <span>
+                    {step} -- {slideIndex} / {slideCount}
+                  </span>
+                  <button onClick={slideNext}>Next</button>
+                </div>
+              )}
+            </Controls>
+          </div>
+        </Carousel>
+      </div>
     )
   }
 }
