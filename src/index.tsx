@@ -9,16 +9,6 @@ const CarouselContext = React.createContext({
   sliderWidth: 0
 })
 
-interface CarouselDefaultProps {
-  speed: number
-  easing: string
-  afterSlide: (prevIndex: number, nextIndex: number) => void
-  itemsToShow: number
-  wrapAround: boolean
-  showOverflow: boolean
-  slideIndex: number
-}
-
 export interface CarouselProps {
   items: (React.ReactType | React.ReactChild)[]
   position?: number
@@ -29,6 +19,18 @@ export interface CarouselProps {
   wrapAround?: false
   showOverflow?: boolean
   slideIndex?: number
+  centered?: boolean
+}
+
+interface CarouselDefaultProps {
+  speed: number
+  easing: string
+  afterSlide: (prevIndex: number, nextIndex: number) => void
+  itemsToShow: number
+  wrapAround: boolean
+  showOverflow: boolean
+  slideIndex: number
+  centered: boolean
 }
 
 export interface CarouselControlsProps {
@@ -68,7 +70,8 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
     itemsToShow: props.itemsToShow || 1,
     wrapAround: props.wrapAround || false,
     showOverflow: props.showOverflow || false,
-    slideIndex: props.slideIndex || 0
+    slideIndex: props.slideIndex || 0,
+    centered: false
   }
 }
 
@@ -351,8 +354,16 @@ export class Slider extends React.Component {
       shouldNotAnimate,
       speed,
       itemsToShow,
-      showOverflow
+      showOverflow,
+      centered
     } = this.context
+
+    const railWidth = (sliderWidth / itemsToShow) * items.length
+    const defaultLeft = centered ? sliderWidth / itemsToShow / 2 : 0
+    const railLeft =
+      (-defaultLeft + left + (position * sliderWidth) / itemsToShow) * -1
+    const transitionSpeed =
+      isDragging || isResizing || shouldNotAnimate ? 0 : speed
 
     return (
       <div
@@ -366,13 +377,10 @@ export class Slider extends React.Component {
       >
         <div
           style={{
-            width: `${(sliderWidth / itemsToShow) * items.length}px`,
             display: 'flex',
-            transition: `${
-              isDragging || isResizing || shouldNotAnimate ? 0 : speed
-            }ms linear`,
-            marginLeft: `${(left + (position * sliderWidth) / itemsToShow) *
-              -1}px`
+            width: `${railWidth}px`,
+            marginLeft: `${railLeft}px`,
+            transition: `${transitionSpeed}ms linear`
           }}
         >
           {items.map((Item: React.ReactElement<any>, index: any) => {

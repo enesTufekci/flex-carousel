@@ -20,11 +20,12 @@ export default class App extends Component {
     return (
       <div style={{ border: '3px dotted black' }}>
         <Carousel
-          itemsToShow={2}
-          slideIndex={3}
+          itemsToShow={1}
+          // slideIndex={0}
           afterSlide={this.handleAfterSlide}
           // showOverflow={true}
-          // wrapAround={true}
+          // centered={true}
+          wrapAround={true}
           items={colors.map((color, index) => (
             <div className="slider-item" style={{ backgroundColor: color }}>
               Slide {index}
