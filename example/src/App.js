@@ -24,7 +24,7 @@ export default class App extends Component {
           slideIndex={3}
           afterSlide={this.handleAfterSlide}
           // showOverflow={true}
-          wrapAround={true}
+          // wrapAround={true}
           items={colors.map((color, index) => (
             <div className="slider-item" style={{ backgroundColor: color }}>
               Slide {index}

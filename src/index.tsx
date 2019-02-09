@@ -72,6 +72,24 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
   }
 }
 
+function rearrangeItems(
+  props: CarouselProps,
+  defaultProps: CarouselDefaultProps
+) {
+  const { items } = props
+  const { slideIndex, wrapAround } = defaultProps
+  if (wrapAround) {
+    return {
+      items: [...items, ...items],
+      position: slideIndex + items.length
+    }
+  }
+  return {
+    items,
+    position: slideIndex
+  }
+}
+
 export class Carousel extends React.Component<CarouselProps, CarouselState> {
   frameRef = React.createRef<HTMLDivElement>()
   draggingStartedAt: number = 0
@@ -81,22 +99,24 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   constructor(props: CarouselProps) {
     super(props)
+
+    const defaultProps = getDefaults(props)
+    const { items, position } = rearrangeItems(props, defaultProps)
     this.state = {
-      position: props.items.length + (props.slideIndex || 0),
+      items,
+      position,
       frameRef: this.frameRef,
       isDragging: false,
       isResizing: false,
       shouldNotAnimate: false,
       slideCount: props.items.length,
-      items: [...props.items, ...props.items],
       sliderWidth: 0,
       left: 0,
-
       slideNext: this.slideNext,
       slidePrev: this.slidePrev,
       touchEvents: this.getTouchEvents(),
       mouseEvents: this.getMouseEvents(),
-      ...getDefaults(props)
+      ...defaultProps
     }
   }
 
@@ -130,16 +150,16 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   handleDragging = (nextPosition: number) => {
     const { sliderWidth, isDragging, itemsToShow } = this.state
-    const diff = this.draggingStartedAt - nextPosition
+    const dragDifference = this.draggingStartedAt - nextPosition
     if (isDragging && !this.isSliding) {
-      if (Math.abs(diff) > sliderWidth / itemsToShow / 3) {
-        if (diff > 0) {
+      if (Math.abs(dragDifference) > sliderWidth / itemsToShow / 3) {
+        if (dragDifference > 0) {
           this.slideNext()
         } else {
-          this.handleSlidePrev()
+          this.slidePrev()
         }
       } else {
-        this.setState({ left: diff })
+        this.setState({ left: dragDifference })
       }
     }
   }
@@ -152,8 +172,18 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   }
 
   handleSlideNext = () => {
-    const { items, itemsToShow, speed, slideIndex, slideCount } = this.state
-
+    const {
+      items,
+      itemsToShow,
+      speed,
+      slideIndex,
+      slideCount,
+      wrapAround
+    } = this.state
+    if (!wrapAround && slideIndex >= slideCount - itemsToShow) {
+      this.isSliding = false
+      return
+    }
     this.setState(
       state => ({
         position: Math.min(state.position + 1, items.length - itemsToShow),
@@ -173,9 +203,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   handleWrapNext = () => {
     const { items, wrapAround } = this.state
-    const clones = items.slice(0, 1)
-    const rest = items.slice(1)
     if (wrapAround) {
+      const clones = items.slice(0, 1)
+      const rest = items.slice(1)
       this.setState(
         state => ({
           position: state.position - 1,
@@ -208,8 +238,11 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   }
 
   handleSlidePrev = () => {
-    const { speed, slideIndex, slideCount } = this.state
-
+    const { speed, slideIndex, slideCount, wrapAround } = this.state
+    if (!wrapAround && slideIndex <= 0) {
+      this.isSliding = false
+      return
+    }
     this.setState(
       state => ({
         position: state.position - 1,
@@ -229,9 +262,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   handleWrapPrev = () => {
     const { items, wrapAround } = this.state
-    const clones = items.slice(-1)
-    const rest = items.slice(0, items.length - 1)
     if (wrapAround) {
+      const clones = items.slice(-1)
+      const rest = items.slice(0, items.length - 1)
       this.setState(
         state => ({
           position: state.position + 1,
@@ -320,7 +353,7 @@ export class Slider extends React.Component {
       itemsToShow,
       showOverflow
     } = this.context
-    console.log(position)
+
     return (
       <div
         {...touchEvents}
