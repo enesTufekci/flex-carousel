@@ -355,7 +355,8 @@ export class Slider extends React.Component {
       speed,
       itemsToShow,
       showOverflow,
-      centered
+      centered,
+      easing
     } = this.context
 
     const railWidth = (sliderWidth / itemsToShow) * items.length
@@ -380,7 +381,7 @@ export class Slider extends React.Component {
             display: 'flex',
             width: `${railWidth}px`,
             marginLeft: `${railLeft}px`,
-            transition: `${transitionSpeed}ms linear`
+            transition: `${transitionSpeed}ms ${easing}`
           }}
         >
           {items.map((Item: React.ReactElement<any>, index: any) => {

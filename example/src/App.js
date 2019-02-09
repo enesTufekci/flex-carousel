@@ -25,6 +25,8 @@ export default class App extends Component {
           afterSlide={this.handleAfterSlide}
           // showOverflow={true}
           // centered={true}
+          easing="cubic-bezier(0.9, 0.02, 0.04, 0.99)"
+          speed={600}
           wrapAround={true}
           items={colors.map((color, index) => (
             <div className="slider-item" style={{ backgroundColor: color }}>
