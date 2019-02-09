@@ -129,24 +129,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   })
 
   handleDragging = (nextPosition: number) => {
-    const {
-      sliderWidth,
-      isDragging,
-      position,
-      items,
-      wrapAround,
-      itemsToShow
-    } = this.state
+    const { sliderWidth, isDragging, itemsToShow } = this.state
     const diff = this.draggingStartedAt - nextPosition
-    if (isDragging) {
-      if (wrapAround) {
-        if (diff < 0 && position === 0) {
-          // this.handleTempLeft()
-        }
-        if (diff > 0 && position === items.length - 1) {
-          // this.handleTempRight()
-        }
-      }
+    if (isDragging && !this.isSliding) {
       if (Math.abs(diff) > sliderWidth / itemsToShow / 3) {
         if (diff > 0) {
           this.slideNext()
@@ -205,7 +190,6 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   }
 
   handleClear = () => {
-    // const { speed } = this.state
     this.setDragging(false, 0)
     const timer = setTimeout(() => {
       clearTimeout(timer)
