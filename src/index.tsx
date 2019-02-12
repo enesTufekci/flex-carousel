@@ -388,7 +388,10 @@ export class Slider extends React.Component {
             return React.cloneElement(Item, {
               ...Item.props,
               key: index,
-              style: { ...Item.props.style, width: `100%` }
+              style: {
+                ...Item.props.style,
+                width: `${sliderWidth / itemsToShow}px`
+              }
             })
           })}
         </div>

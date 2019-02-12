@@ -12,14 +12,32 @@ body {
 
 #slider {
   width: 70vw;
-  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .slider-item {
+  padding: 4px;
+}
+
+.tile {
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.3);
+  padding: 2px;
   height: 400px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tile-image {
+  height: 65%;
+}
+
+.tile-image img {
+  width: 100%;
+}
+
+.tile-description {
+  font-size: 12px;
+  padding: 4px;
 }
 
 .slider-item > * {
