@@ -1,0 +1,45 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Carousel	src/index.tsx	/^export class Carousel extends React.Component<CarouselProps, CarouselState> {$/;"	c
+CarouselControlsProps	src/index.tsx	/^export interface CarouselControlsProps {$/;"	i
+CarouselDefaultProps	src/index.tsx	/^interface CarouselDefaultProps {$/;"	i
+CarouselProps	src/index.tsx	/^export interface CarouselProps {$/;"	i
+CarouselState	src/index.tsx	/^export interface CarouselState extends CarouselDefaultProps, CarouselControlsProps {$/;"	i
+Controls	src/index.tsx	/^export class Controls extends React.Component<{$/;"	c
+ExampleComponent	src/test.ts	/^import ExampleComponent from '.\/'$/;"	I
+Slider	src/index.tsx	/^export class Slider extends React.Component {$/;"	c
+SvgrComponent	src/typings.d.ts	/^interface SvgrComponent$/;"	i
+afterSlide	example/src/App.js	/^          afterSlide={this.handleAfterSlide}$/;"	P
+alignItems	example/src/App.js	/^          alignItems: 'center',$/;"	P
+border	example/src/App.js	/^          border: '3px dotted black',$/;"	P
+clean	rollup.config.js	/^      clean: true$/;"	P
+display	example/src/App.js	/^          display: 'flex',$/;"	P
+easing	example/src/App.js	/^          easing="linear"$/;"	P
+exports	rollup.config.js	/^      exports: 'named',$/;"	P
+file	rollup.config.js	/^      file: pkg.main,$/;"	P
+file	rollup.config.js	/^      file: pkg.module,$/;"	P
+flexDirection	example/src/App.js	/^          flexDirection: 'column',$/;"	P
+format	rollup.config.js	/^      format: 'cjs',$/;"	P
+format	rollup.config.js	/^      format: 'es',$/;"	P
+getDefaults	src/index.tsx	/^function getDefaults(props: CarouselProps): CarouselDefaultProps {$/;"	f
+handleAfterSlide	example/src/App.js	/^  handleAfterSlide = (prevIndex, currentIndex) => {$/;"	M
+images	example/src/App.js	/^const images = [$/;"	A
+input	rollup.config.js	/^  input: 'src\/index.tsx',$/;"	P
+items	example/src/App.js	/^          items={images.map(src => ($/;"	P
+itemsToShow	example/src/App.js	/^          itemsToShow={3}$/;"	P
+justifyContent	example/src/App.js	/^          justifyContent: 'center',$/;"	P
+modules	rollup.config.js	/^      modules: true$/;"	P
+output	rollup.config.js	/^  output: [$/;"	P
+plugins	rollup.config.js	/^  plugins: [$/;"	P
+rearrangeItems	src/index.tsx	/^function rearrangeItems(props: CarouselProps, defaultProps: CarouselDefaultProps) {$/;"	f
+render	example/src/App.js	/^  render() {$/;"	M
+rollupCommonJSResolveHack	rollup.config.js	/^      rollupCommonJSResolveHack: true,$/;"	P
+slideIndex	example/src/App.js	/^          slideIndex={0}$/;"	P
+sourcemap	rollup.config.js	/^      sourcemap: true$/;"	P
+speed	example/src/App.js	/^          speed={300}$/;"	P
+throttle	src/index.tsx	/^import throttle from 'raf-throttle';$/;"	I
+width	example/src/App.js	/^          width: '100%',$/;"	P
