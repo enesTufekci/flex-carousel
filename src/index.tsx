@@ -179,6 +179,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   };
 
   slideNext = () => {
+    this.toggleAutoplay();
     if (!this.isSliding) {
       this.isSliding = true;
       this.handleSlideNext();
@@ -238,6 +239,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   };
 
   slidePrev = () => {
+    this.toggleAutoplay();
     if (!this.isSliding) {
       this.isSliding = true;
       this.handleSlidePrev();
@@ -301,7 +303,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     this.setState({ isDragging, left: 0 }, () => (this.draggingStartedAt = draggingStartedAt));
   };
 
-  initiateAutoplay = () => {
+  toggleAutoplay = (isUnmounting = false) => {
+    clearInterval(this.autoPlayTimer);
+    if (isUnmounting) return;
     const {
       autoplay: { interval, pauseOnHover },
     } = this.state;
@@ -316,13 +320,13 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   componentDidMount() {
     this.setSliderWidth();
-    this.initiateAutoplay();
+    this.toggleAutoplay();
     window.addEventListener('resize', this.setSliderWidthThrottled);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setSliderWidthThrottled);
-    clearInterval(this.autoPlayTimer);
+    this.toggleAutoplay(true);
   }
 
   setSliderWidth = () => {
@@ -394,16 +398,11 @@ export class Slider extends React.Component {
             transition: `${transitionSpeed}ms ${easing}`,
           }}
         >
-          {items.map((Item: React.ReactElement<any>, index: any) => {
-            return React.cloneElement(Item, {
-              ...Item.props,
-              key: index,
-              style: {
-                ...Item.props.style,
-                width: `${sliderWidth / itemsToShow}px`,
-              },
-            });
-          })}
+          {items.map((item: any, index: any) => (
+            <div key={index} style={{ width: `${sliderWidth / itemsToShow}px` }}>
+              {item}
+            </div>
+          ))}
         </div>
       </div>
     );

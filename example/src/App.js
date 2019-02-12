@@ -41,8 +41,8 @@ export default class App extends Component {
           easing="linear"
           speed={300}
           autoplay={{
-            interval: 1500,
-            pauseOnHover: true
+            interval: 5000,
+            pauseOnHover: true,
           }}
           items={images.map(src => (
             <div className="slider-item">
