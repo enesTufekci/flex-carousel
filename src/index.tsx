@@ -1,31 +1,23 @@
 import * as React from 'react';
 import throttle from 'raf-throttle';
 
-const CarouselContext = React.createContext({
-  position: 0,
-  slideCount: 0,
-  items: [],
-  frameRef: null,
-  sliderWidth: 0,
-});
+const CarouselContext = React.createContext({});
 
 export interface Autoplay {
   interval: number;
   pauseOnHover: boolean;
 }
 
-export interface CarouselProps {
+interface CarouselConfig extends Partial<CarouselDefaultProps> {}
+
+type AvailableTouchEvents = Record<'onTouchMove' | 'onTouchStart' | 'onTouchEnd', React.DOMAttributes<HTMLDivElement>>;
+type AvailableMouseEvents = Record<
+  'onMouseDown' | 'onMouseUp' | 'onMouseEnter' | 'onMouseLeave' | 'onMouseMove',
+  React.DOMAttributes<HTMLDivElement>
+>;
+
+export interface CarouselProps extends CarouselConfig {
   items: (React.ReactType | React.ReactChild)[];
-  position?: number;
-  speed?: number;
-  easing?: string;
-  afterSlide?: (prevIndex: number, nextIndex: number) => void;
-  itemsToShow?: number;
-  wrapAround?: false;
-  showOverflow?: boolean;
-  slideIndex?: number;
-  centered?: boolean;
-  autoplay?: Autoplay;
 }
 
 interface CarouselDefaultProps {
@@ -43,23 +35,19 @@ interface CarouselDefaultProps {
 export interface CarouselControlsProps {
   slideNext: () => void;
   slidePrev: () => void;
+  slideIndex: number;
   position: number;
   slideCount: number;
-  itemsToShow: number;
 }
 
 export interface CarouselState extends CarouselDefaultProps, CarouselControlsProps {
   position: number;
   items: (React.ReactType | React.ReactChild)[];
   sliderWidth: number;
-  frameRef: any;
+  frameRef: React.Ref<HTMLDivElement>;
   left: number;
-  touchEvents: {
-    [key: string]: (event: React.TouchEvent<HTMLDivElement>) => void;
-  };
-  mouseEvents: {
-    [key: string]: (event: React.MouseEvent<HTMLDivElement>) => void;
-  };
+  touchEvents: { [key in keyof AvailableTouchEvents]: (event: React.TouchEvent<HTMLDivElement>) => void };
+  mouseEvents: { [key in keyof AvailableMouseEvents]: (event: React.MouseEvent<HTMLDivElement>) => void };
   isDragging: boolean;
   isResizing: boolean;
   shouldNotAnimate: boolean;
@@ -349,7 +337,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   setSliderWidthThrottled = throttle(this.setSliderWidth);
 
   render() {
-    return <CarouselContext.Provider value={this.state as any}>{this.props.children}</CarouselContext.Provider>;
+    return <CarouselContext.Provider value={this.state}>{this.props.children}</CarouselContext.Provider>;
   }
 }
 
@@ -373,7 +361,7 @@ export class Slider extends React.Component {
       showOverflow,
       centered,
       easing,
-    } = this.context;
+    } = this.context as CarouselState;
 
     const railWidth = (sliderWidth / itemsToShow) * items.length;
     const defaultLeft = centered ? sliderWidth / itemsToShow / 2 : 0;
@@ -385,6 +373,7 @@ export class Slider extends React.Component {
         {...touchEvents}
         {...mouseEvents}
         ref={frameRef}
+        onTouchCancel={() => {}}
         style={{
           overflow: showOverflow ? 'inherit' : 'hidden',
           position: 'relative',
@@ -410,12 +399,12 @@ export class Slider extends React.Component {
 }
 
 export class Controls extends React.Component<{
-  children: (params: any) => React.ReactType;
+  children: (params: CarouselControlsProps) => React.ReactType;
 }> {
   static contextType = CarouselContext;
 
   render() {
-    const { slideNext, slidePrev, slideIndex, slideCount, position } = this.context;
+    const { slideNext, slidePrev, slideIndex, slideCount, position } = this.context as CarouselState;
     return this.props.children({
       slideNext,
       slidePrev,
