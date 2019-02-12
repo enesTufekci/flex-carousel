@@ -9,6 +9,11 @@ const CarouselContext = React.createContext({
   sliderWidth: 0
 })
 
+export interface Autoplay {
+  interval: number
+  pauseOnHover: boolean
+}
+
 export interface CarouselProps {
   items: (React.ReactType | React.ReactChild)[]
   position?: number
@@ -20,6 +25,7 @@ export interface CarouselProps {
   showOverflow?: boolean
   slideIndex?: number
   centered?: boolean
+  autoplay?: Autoplay
 }
 
 interface CarouselDefaultProps {
@@ -31,6 +37,7 @@ interface CarouselDefaultProps {
   showOverflow: boolean
   slideIndex: number
   centered: boolean
+  autoplay: Autoplay
 }
 
 export interface CarouselControlsProps {
@@ -71,6 +78,7 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
     wrapAround: props.wrapAround || false,
     showOverflow: props.showOverflow || false,
     slideIndex: props.slideIndex || 0,
+    autoplay: { interval: 0, pauseOnHover: true, ...(props.autoplay || {}) },
     centered: false
   }
 }
@@ -98,7 +106,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   draggingStartedAt: number = 0
   resizeTimeout: any = null
   afterSlideTimer: any = null
+  autoPlayTimer: any = null
   isSliding: boolean
+  isHovering: boolean = false
 
   constructor(props: CarouselProps) {
     super(props)
@@ -148,6 +158,12 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     },
     onMouseUp: () => {
       this.setDragging(false, 0)
+    },
+    onMouseEnter: () => {
+      this.isHovering = true
+    },
+    onMouseLeave: () => {
+      this.isHovering = false
     }
   })
 
@@ -300,13 +316,28 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     )
   }
 
+  initiateAutoplay = () => {
+    const {
+      autoplay: { interval, pauseOnHover }
+    } = this.state
+    if (interval > 0) {
+      this.autoPlayTimer = setInterval(() => {
+        if (!pauseOnHover || (pauseOnHover && !this.isHovering)) {
+          this.slideNext()
+        }
+      }, interval)
+    }
+  }
+
   componentDidMount() {
     this.setSliderWidth()
+    this.initiateAutoplay()
     window.addEventListener('resize', this.setSliderWidthThrottled)
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setSliderWidthThrottled)
+    clearInterval(this.autoPlayTimer)
   }
 
   setSliderWidth = () => {

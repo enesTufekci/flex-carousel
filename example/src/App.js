@@ -40,6 +40,10 @@ export default class App extends Component {
           afterSlide={this.handleAfterSlide}
           easing="linear"
           speed={300}
+          autoplay={{
+            interval: 1500,
+            pauseOnHover: true
+          }}
           items={images.map(src => (
             <div className="slider-item">
               <div className="tile">
