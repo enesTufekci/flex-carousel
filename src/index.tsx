@@ -71,10 +71,10 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
 
 function rearrangeItems(props: CarouselProps, defaultProps: CarouselDefaultProps) {
   const { items } = props;
-  const { slideIndex, wrapAround } = defaultProps;
+  const { slideIndex, wrapAround, itemsToShow } = defaultProps;
   if (wrapAround) {
     return {
-      items: [...items, ...items],
+      items: [...items, ...items, ...(itemsToShow > items.length ? items : [])],
       position: slideIndex + items.length,
     };
   }
