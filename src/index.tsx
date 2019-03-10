@@ -8,7 +8,7 @@ export interface Autoplay {
   pauseOnHover: boolean;
 }
 
-interface CarouselConfig extends Partial<CarouselDefaultProps> {}
+interface CarouselConfig extends Partial<CarouselDefaultProps> { }
 
 type AvailableTouchEvents = Record<'onTouchMove' | 'onTouchStart' | 'onTouchEnd', React.DOMAttributes<HTMLDivElement>>;
 type AvailableMouseEvents = Record<
@@ -30,6 +30,7 @@ interface CarouselDefaultProps {
   slideIndex: number;
   centered: boolean;
   autoplay: Autoplay;
+  disableDragging: boolean,
 }
 
 export interface CarouselControlsProps {
@@ -59,13 +60,14 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
   return {
     speed: props.speed || defaultSpeed,
     easing: props.easing || defaultEasing,
-    afterSlide: props.afterSlide || (() => {}),
+    afterSlide: props.afterSlide || (() => { }),
     itemsToShow: props.itemsToShow || 1,
     wrapAround: props.wrapAround || false,
     showOverflow: props.showOverflow || false,
     slideIndex: props.slideIndex || 0,
     autoplay: { interval: 0, pauseOnHover: true, ...(props.autoplay || {}) },
     centered: false,
+    disableDragging: props.disableDragging || false,
   };
 }
 
@@ -361,20 +363,23 @@ export class Slider extends React.Component {
       showOverflow,
       centered,
       easing,
+      disableDragging
     } = this.context as CarouselState;
+
+    console.log('disableDragging', disableDragging)
 
     const railWidth = (sliderWidth / itemsToShow) * items.length;
     const defaultLeft = centered ? sliderWidth / itemsToShow / 2 : 0;
     const railLeft = (-defaultLeft + left + (position * sliderWidth) / itemsToShow) * -1;
     const transitionSpeed = isDragging || isResizing || shouldNotAnimate ? 0 : speed;
-
+    const eventHandlers = !disableDragging && { ...touchEvents, ...mouseEvents }
     return (
       <div
-        {...touchEvents}
-        {...mouseEvents}
+        {...eventHandlers}
         ref={frameRef}
-        onTouchCancel={() => {}}
+        onTouchCancel={() => { }}
         style={{
+          maxWidth: '500px',
           overflow: showOverflow ? 'inherit' : 'hidden',
           position: 'relative',
         }}
