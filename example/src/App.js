@@ -40,6 +40,7 @@ export default class App extends Component {
           afterSlide={this.handleAfterSlide}
           easing="linear"
           speed={300}
+          disableDragging={true}
           autoplay={{
             interval: 5000,
             pauseOnHover: true,
