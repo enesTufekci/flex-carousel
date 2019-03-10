@@ -366,8 +366,6 @@ export class Slider extends React.Component {
       disableDragging
     } = this.context as CarouselState;
 
-    console.log('disableDragging', disableDragging)
-
     const railWidth = (sliderWidth / itemsToShow) * items.length;
     const defaultLeft = centered ? sliderWidth / itemsToShow / 2 : 0;
     const railLeft = (-defaultLeft + left + (position * sliderWidth) / itemsToShow) * -1;
