@@ -177,22 +177,23 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   };
 
   handleSlideNext = () => {
-    const { items, itemsToShow, speed, slideIndex, slideCount, wrapAround } = this.state;
+    const { items, itemsToShow, speed, slideIndex, slideCount, wrapAround, position } = this.state;
     if (!wrapAround && slideIndex >= slideCount - itemsToShow) {
       this.isSliding = false;
       return;
     }
     this.setState(
-      state => ({
-        position: Math.min(state.position + 1, items.length - itemsToShow),
+      {
+        position: Math.min(position + 1, items.length - itemsToShow),
         left: 0,
         isResizing: false,
         slideIndex: (slideIndex + 1) % slideCount,
-      }),
+      },
       () => {
         this.setDragging(false, 0);
         const timer = setTimeout(() => {
           clearInterval(timer);
+          this.handleAfterSlide(position)
           this.handleWrapNext();
         }, speed);
       },
@@ -237,22 +238,23 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
   };
 
   handleSlidePrev = () => {
-    const { speed, slideIndex, slideCount, wrapAround } = this.state;
+    const { speed, slideIndex, slideCount, wrapAround, position } = this.state;
     if (!wrapAround && slideIndex <= 0) {
       this.isSliding = false;
       return;
     }
     this.setState(
-      state => ({
-        position: state.position - 1,
+      {
+        position: position - 1,
         left: 0,
         isResizing: false,
         slideIndex: (slideIndex - 1 + slideCount) % slideCount,
-      }),
+      },
       () => {
         this.setDragging(false, 0);
         const timer = setTimeout(() => {
           clearInterval(timer);
+          this.handleAfterSlide(position)
           this.handleWrapPrev();
         }, speed);
       },
@@ -279,13 +281,9 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
 
   handleAfterSlide = (prevIndex: number) => {
     const { position } = this.state;
-    clearTimeout(this.afterSlideTimer);
     if (prevIndex !== position) {
-      const { afterSlide, speed } = this.state;
-      this.afterSlideTimer = setTimeout(() => {
-        clearTimeout(this.afterSlideTimer);
-        afterSlide(prevIndex, position);
-      }, speed);
+      const { afterSlide } = this.state;
+      afterSlide(prevIndex, position);
     }
   };
 
@@ -319,7 +317,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     this.toggleAutoplay(true);
   }
 
-  setSliderWidth = () => {
+  setSliderWidth = (cb = (_: any) => { }) => {
     if (!this.state.isResizing) {
       this.setState({
         isResizing: true,
@@ -329,10 +327,12 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
         this.setState({
           isResizing: false,
         });
-      });
+      }, 300);
     }
     if (this.frameRef.current) {
-      this.setState({ sliderWidth: this.frameRef.current.offsetWidth });
+      const nextWidth = this.frameRef.current.offsetWidth
+
+      this.setState({ sliderWidth: nextWidth }, () => cb(nextWidth));
     }
   };
 
@@ -371,13 +371,13 @@ export class Slider extends React.Component {
     const railLeft = (-defaultLeft + left + (position * sliderWidth) / itemsToShow) * -1;
     const transitionSpeed = isDragging || isResizing || shouldNotAnimate ? 0 : speed;
     const eventHandlers = !disableDragging && { ...touchEvents, ...mouseEvents }
+
     return (
       <div
         {...eventHandlers}
         ref={frameRef}
         onTouchCancel={() => { }}
         style={{
-          maxWidth: '500px',
           overflow: showOverflow ? 'inherit' : 'hidden',
           position: 'relative',
         }}
