@@ -72,7 +72,7 @@ function getDefaults(props: CarouselProps): CarouselDefaultProps {
 }
 
 function rearrangeItems(props: CarouselProps, defaultProps: CarouselDefaultProps) {
-  const { items } = props;
+  const { items = [] } = props;
   const { slideIndex, wrapAround, itemsToShow } = defaultProps;
   if (wrapAround) {
     return {
@@ -332,7 +332,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     if (this.frameRef.current) {
       const nextWidth = this.frameRef.current.offsetWidth
 
-      this.setState({ sliderWidth: nextWidth }, () => cb(nextWidth));
+      this.setState({ sliderWidth: nextWidth }, () => cb && cb(nextWidth));
     }
   };
 
