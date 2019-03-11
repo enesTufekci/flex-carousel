@@ -332,7 +332,7 @@ export class Carousel extends React.Component<CarouselProps, CarouselState> {
     if (this.frameRef.current) {
       const nextWidth = this.frameRef.current.offsetWidth
 
-      this.setState({ sliderWidth: nextWidth }, () => cb && cb(nextWidth));
+      this.setState({ sliderWidth: nextWidth }, () => typeof cb === 'function' && cb(nextWidth));
     }
   };
 
@@ -349,7 +349,7 @@ export class Slider extends React.Component {
   render() {
     const {
       position,
-      items,
+      items = [],
       frameRef,
       sliderWidth,
       left,
